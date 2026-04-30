@@ -20,7 +20,8 @@ The key-related steps below are optional; if you skip them, the app will be sign
 1. Fork this project.
 2. (Optional) Convert your APK signing key file to base64; here's a Linux example:
 ```shell
-base64 -w 0 keystore.jks > keystore.jks.base64
+keytool -genkey -v -keystore frpAndroid.jks -alias frpAndroid -keyalg RSA -keysize 2048 -validity 3650
+base64 -w 0 frpAndroid.jks > frpAndroid.jks.base64
 ```
 3. (Optional) Navigate to this page of the Github project: Settings > Secrets and variables > Actions > Repository secrets.
 4. (Optional) Add the following four environment variables:
