@@ -20,7 +20,8 @@ A frp client for Android
 1. fork本项目
 2. (可选) 将您的apk签名密钥文件转为base64，以下为Linux示例
 ```shell
-base64 -w 0 keystore.jks > keystore.jks.base64
+keytool -genkey -v -keystore frpAndroid.jks -alias frpAndroid -keyalg RSA -keysize 2048 -validity 3650
+base64 -w 0 frpAndroid.jks > frpAndroid.jks.base64
 ```
 3. (可选) 转到Github项目的此页面：Settings > Secrets and variables > Actions > Repository secrets
 4. (可选) 添加以下四个环境变量：```KEY_ALIAS``` ```KEY_PASSWORD``` ```STORE_FILE``` ```STORE_PASSWORD```其中```STORE_FILE```的内容为步骤2的base64，其他环境变量内容请根据您的密钥文件自行填写
