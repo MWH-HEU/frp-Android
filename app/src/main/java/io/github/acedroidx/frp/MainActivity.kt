@@ -798,10 +798,16 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun updateConfigList() {
-        frpcConfigList.value = (FrpType.FRPC.getDir(this).list()?.toList() ?: listOf()).map {
+        // frpcConfigList.value = (FrpType.FRPC.getDir(this).list()?.toList() ?: listOf()).map {
+        //     FrpConfig(FrpType.FRPC, it)
+        // }
+        // frpsConfigList.value = (FrpType.FRPS.getDir(this).list()?.toList() ?: listOf()).map {
+        //     FrpConfig(FrpType.FRPS, it)
+        // }
+        frpcConfigList.value = (FrpType.FRPC.getDir(this).listFiles()?.filter { it.extension == "toml" }?.map { it.name }?.toList() ?: listOf()).map {
             FrpConfig(FrpType.FRPC, it)
         }
-        frpsConfigList.value = (FrpType.FRPS.getDir(this).list()?.toList() ?: listOf()).map {
+        frpsConfigList.value = (FrpType.FRPS.getDir(this).listFiles()?.filter { it.extension == "toml" }?.map { it.name }?.toList() ?: listOf()).map {
             FrpConfig(FrpType.FRPS, it)
         }
 
