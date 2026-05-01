@@ -804,12 +804,29 @@ class MainActivity : ComponentActivity() {
         // frpsConfigList.value = (FrpType.FRPS.getDir(this).list()?.toList() ?: listOf()).map {
         //     FrpConfig(FrpType.FRPS, it)
         // }
-        frpcConfigList.value = (FrpType.FRPC.getDir(this).listFiles()?.filter { it.extension == "toml" }?.map { it.name }?.toList() ?: listOf()).map {
-            FrpConfig(FrpType.FRPC, it)
-        }
-        frpsConfigList.value = (FrpType.FRPS.getDir(this).listFiles()?.filter { it.extension == "toml" }?.map { it.name }?.toList() ?: listOf()).map {
-            FrpConfig(FrpType.FRPS, it)
-        }
+        // // 只显示toml后缀文件
+        // frpcConfigList.value = (FrpType.FRPC.getDir(this).listFiles()
+        //     ?.filter { it.extension == "toml" }
+        //     ?.map { it.name }?.toList() ?: listOf())
+        //     .map { FrpConfig(FrpType.FRPC, it) }
+        // frpsConfigList.value = (FrpType.FRPS.getDir(this).listFiles()
+        //     ?.filter { it.extension == "toml" }
+        //     ?.map { it.name }?.toList() ?: listOf())
+        //     .map { FrpConfig(FrpType.FRPS, it) }
+        // 配置列表过滤：隐藏 .key 和 .crt 后缀的文件，其他文件保留显示
+        frpcConfigList.value = FrpType.FRPC.getDir(this)
+            .listFiles()
+            ?.filter { !it.name.endsWith(".key") && !it.name.endsWith(".crt") }
+            ?.map { it.name }
+            ?.map { FrpConfig(FrpType.FRPC, it) }
+            ?: emptyList()
+
+        frpsConfigList.value = FrpType.FRPS.getDir(this)
+            .listFiles()
+            ?.filter { !it.name.endsWith(".key") && !it.name.endsWith(".crt") }
+            ?.map { it.name }
+            ?.map { FrpConfig(FrpType.FRPS, it) }
+            ?: emptyList()
 
         // 检查自启动列表中是否含有已经删除的配置
         val frpcAutoStartList =
