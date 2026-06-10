@@ -21,7 +21,9 @@ jobs:
         with:
           repository: fatedier/frp
           path: frp
-          ref: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.tag != '' && format('refs/tags/{0}', github.event.inputs.tag) || '' }}
+          # ref: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.tag != '' && format('refs/tags/{0}', github.event.inputs.tag) || '' }}
+          # 默认采用 v0.68.0 内核。
+          ref: ${{ github.event.inputs.tag != '' && format('refs/tags/{0}', github.event.inputs.tag) || 'refs/tags/v0.68.0' }}
       - name: set up JDK 17
         uses: actions/setup-java@v5
         with:
