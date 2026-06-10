@@ -850,15 +850,43 @@ class SettingsActivity : ComponentActivity() {
         }
     }
 
+    // private fun loadConfigList() {
+    //     val frpcConfigs = (FrpType.FRPC.getDir(this).list()?.toList() ?: emptyList()).map {
+    //         FrpConfig(FrpType.FRPC, it)
+    //     }
+    //     val frpsConfigs = (FrpType.FRPS.getDir(this).list()?.toList() ?: emptyList()).map {
+    //         FrpConfig(FrpType.FRPS, it)
+    //     }
+    //     allConfigs.value = frpcConfigs + frpsConfigs
+    // }
+    // 只显示toml后缀文件
     private fun loadConfigList() {
-        val frpcConfigs = (FrpType.FRPC.getDir(this).list()?.toList() ?: emptyList()).map {
-            FrpConfig(FrpType.FRPC, it)
-        }
-        val frpsConfigs = (FrpType.FRPS.getDir(this).list()?.toList() ?: emptyList()).map {
-            FrpConfig(FrpType.FRPS, it)
-        }
+        val frpcConfigs = (FrpType.FRPC.getDir(this).listFiles()
+            ?.filter { it.extension == "toml" }
+            ?.map { it.name }
+            ?.toList() ?: emptyList())
+            .map { FrpConfig(FrpType.FRPC, it) }
+        val frpsConfigs = (FrpType.FRPS.getDir(this).listFiles()
+            ?.filter { it.extension == "toml" }
+            ?.map { it.name }
+            ?.toList() ?: emptyList())
+            .map { FrpConfig(FrpType.FRPS, it) }
         allConfigs.value = frpcConfigs + frpsConfigs
     }
+    // // 配置列表过滤：隐藏 .key 和 .crt 后缀的文件，其他文件保留显示
+    // private fun loadConfigList() {
+    //     val frpcConfigs = FrpType.FRPC.getDir(this).listFiles()
+    //         ?.filter { !it.name.endsWith(".key") && !it.name.endsWith(".crt") }
+    //         ?.map { it.name }
+    //         ?.map { FrpConfig(FrpType.FRPC, it) }
+    //         ?: emptyList()
+    //     val frpsConfigs = FrpType.FRPS.getDir(this).listFiles()
+    //         ?.filter { !it.name.endsWith(".key") && !it.name.endsWith(".crt") }
+    //         ?.map { it.name }
+    //         ?.map { FrpConfig(FrpType.FRPS, it) }
+    //         ?: emptyList()
+    //     allConfigs.value = frpcConfigs + frpsConfigs
+    // }
 
     private fun loadQuickTileConfig() {
         val configType = preferences.getString(PreferencesKey.QUICK_TILE_CONFIG_TYPE, null)
