@@ -11,6 +11,8 @@ class ShellThread(
     val outputCallback: (text: String) -> Unit
 ) : Thread() {
     private lateinit var process: Process
+    @Volatile
+    private var isStopped = false  // 非主动退出
 
     override fun run() {
         try {
@@ -23,7 +25,24 @@ class ShellThread(
 
             process = processBuilder.start()
 
-            // 处理输出流
+            // // 处理输出流
+            // process.inputStream.bufferedReader().use { reader ->
+            //     try {
+            //         var line: String? = null
+            //         while (!isInterrupted && reader.readLine().also { line = it } != null) {
+            //             line?.let { outputCallback(it) }
+            //         }
+            //     } catch (e: InterruptedIOException) {
+            //         // 线程被中断
+            //         outputCallback("Thread interrupted: ${e.message}")
+            //     }
+            // }
+
+            // // 等待进程结束并读取退出码
+            // val exitCode = process.waitFor()
+            // outputCallback("Process exited with code: $exitCode")
+
+            // 处理输出流 仅当非主动停止时才输出中断信息
             process.inputStream.bufferedReader().use { reader ->
                 try {
                     var line: String? = null
@@ -31,14 +50,17 @@ class ShellThread(
                         line?.let { outputCallback(it) }
                     }
                 } catch (e: InterruptedIOException) {
-                    // 线程被中断
-                    outputCallback("Thread interrupted: ${e.message}")
+                    if (!isStopped) {
+                        outputCallback("Thread interrupted: ${e.message}")
+                    }
                 }
             }
 
             // 等待进程结束并读取退出码
             val exitCode = process.waitFor()
-            outputCallback("Process exited with code: $exitCode")
+            if (!isStopped) {
+                outputCallback("Process exited with code: $exitCode")
+            }
 
         } catch (e: Exception) {
             e.printStackTrace()
@@ -49,6 +71,7 @@ class ShellThread(
     }
 
     fun stopProcess() {
+        isStopped = true      // 主动退出
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 process.destroyForcibly()
